@@ -12,14 +12,24 @@ public class OrangeHRMHomePage {
     }
 
     //WebElement locators
-    private By recruitment = By.id("menu_recruitment_viewRecruitmentModule");
+    private By recruitment = By.xpath("//li[contains(@id, 'left_menu_item_15')]");
     private By candidates = By.id("menu_recruitment_viewCandidates");
 
     /**
      * Go and open recruitment section in side left panel
      */
-    public void clickRecruitmentButton() {
+    public CandidatesPage clickOnRecruitment() {
         driver.findElement(recruitment).click();
+        // Wait for the page to load
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return new CandidatesPage(driver);
+    }
+
+    public void clickRecruitmentButton() {
     }
 
     /**

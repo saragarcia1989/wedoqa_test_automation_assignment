@@ -23,7 +23,7 @@ mvn test -Dtest=GoogleCheeseTest#secondTest
 ```
 Third test:
 ```
-mvn test -Dtest=OrangeHRMTest#thirdTest 
+mvn test -Dtest=OrangeHRMTest#thirdTest
 ```
 Run all tests:
 ```

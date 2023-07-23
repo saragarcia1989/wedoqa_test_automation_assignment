@@ -3,6 +3,7 @@ package pages.orangeHRM;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -16,35 +17,17 @@ public class CandidatesPage {
 
     //    WebElement locators
     private String candidatesIframeId = "noncoreIframe";
-    private By candidatesNumber = By.cssSelector("div#fromToOf > div");
-    private By addButton = By.id("addItemBtn");
-    private By candidateCheckBox = By.cssSelector("td.material-checkbox > label");
-    private By threeDotsButton = By.id("ohrmList_Menu");
-    private By sideMenu = By.id("user-dropdown");
-    private By logOutButton = By.cssSelector("a[id = 'logoutLink']");
+    private By candidatesNumber = By.cssSelector("div[class='count-container active'] > div > span");
+    private By addButton = By.cssSelector("button[tooltip='Add Candidate']");
+    private By candidateCheckBox = By.cssSelector("div[class='oxd-checkbox-wrapper']");
+    private By logOutButton = By.id("navbar-logout");
 
     /**
-     * Need to change the frame in order to interact with the elements on the page
-     */
-    public void switchToCandidatesFrame() {
-        driver.switchTo().frame(candidatesIframeId);
-    }
-
-    /**
-     * @return Integer with total number of candidates
+     * @return Total number of candidates
      */
     public int getNumberOfCandidates() {
-
-        WebElement candidatesElement = driver.findElement(candidatesNumber);
-//        Scroll to find the number of candidates
-        String script = "arguments[0].scrollIntoView();";
-        ((JavascriptExecutor) driver).executeScript(script, candidatesElement);
-//        Get the last characters from the String corresponding to the number of candidates
-        String candidates = driver.findElement(candidatesNumber).getText().substring(10);
-//        Turn the String with the number of candidate into an integer
-        int numberOfCandidates = Integer.valueOf(candidates);
-
-        return numberOfCandidates;
+        String candidates = driver.findElement(candidatesNumber).getText();
+        return Integer.parseInt(candidates);
     }
 
     /**
@@ -65,30 +48,25 @@ public class CandidatesPage {
      * @param lastName         Introduce String with second name
      * @param email            Introduce String with email
      * @param pathOfResumeFile Introduce String with the absolute path of the file
-     * @param vacancy          Introduce integer with the position of the desired vacancy in the list, being 1 the first element
      */
 
-    public void addCandidate(String firstName, String lastName, String email, String pathOfResumeFile, int vacancy) {
+    public void addCandidate(String firstName, String lastName, String email, String pathOfResumeFile) {
 
 //        Add candidate first name
-        driver.findElement(By.cssSelector("input[id = 'addCandidate_firstName']")).sendKeys(firstName);
+        driver.findElement(By.id("addCandidateForm_firstName")).sendKeys(firstName);
 //        Add candidate last name
-        driver.findElement(By.cssSelector("input[id = 'addCandidate_lastName']")).sendKeys(lastName);
+        driver.findElement(By.id("addCandidateForm_lastName")).sendKeys(lastName);
 //        Add candidate email
-        driver.findElement(By.cssSelector("input[id = 'addCandidate_email']")).sendKeys(email);
+        driver.findElement(By.id("addCandidateForm_email")).sendKeys(email);
 //        Upload file with resume
-        driver.findElement(By.id("addCandidate_resume")).sendKeys(pathOfResumeFile);
-//        Click on vacancy section
-        driver.findElement(By.id("textarea_addCandidate_vacancy")).click();
-//        Scroll down to find the dropdown with the vacancies
-        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);",
-                driver.findElement(By.cssSelector("ul[class = 'dropdown-content dropdownObjectSearch active']")));
-//        Scroll down until find the desired vacancy and select it
-        ((JavascriptExecutor) driver).executeScript("arguments[0].click();",
-                driver.findElement(By.cssSelector("li[class = 'searchSingleObjectLi not-selected']:nth-child(" + vacancy + ")")));
+        driver.findElement(By.id("addCandidateForm_file")).sendKeys(pathOfResumeFile);
 //        Click save button
-        driver.findElement(By.id("saveCandidateButton")).click();
-        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+        driver.findElement(By.cssSelector("button[class='oxd-button oxd-button--medium oxd-button--secondary'")).click();
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -98,24 +76,7 @@ public class CandidatesPage {
 
 //        List with all checkboxes
         List<WebElement> boxes = driver.findElements(candidateCheckBox);
-
-//        Scroll to the top of the page
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("window.scrollTo(0, 0);");
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-//        Click in the checkbox chosen
         boxes.get(candidatePosition).click();
-    }
-
-    /**
-     * Click on the three dots button in the left upper side
-     */
-    public void openCandidateOptions() {
-        driver.findElement(threeDotsButton).click();
     }
 
     /**
@@ -123,24 +84,14 @@ public class CandidatesPage {
      */
     public void deleteCandidate() {
 
-        driver.findElement(By.id("deleteItemBtn")).click();
+        driver.findElement(By.cssSelector("button[class='oxd-button oxd-button--medium oxd-button--label-danger with-icon'")).click();
         new WebDriverWait(driver, 2).until(ExpectedConditions
-                .visibilityOfElementLocated(By.id("candidate-delete-button"))).click();
+                .visibilityOfElementLocated(By.cssSelector("button[class='oxd-button oxd-button--medium oxd-button--label-feedback-danger with-icon orangehrm-button-margin'"))).click();
         try {
             Thread.sleep(2000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * Open the side menu
-     */
-    public void displaySideMenu() {
-
-        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 0);");
-        driver.findElement(sideMenu).click();
-
     }
 
     /**
