@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import pages.demoqa.DemoqaPage;
+
 import java.util.List;
 
 public class GoogleResultsPage {
@@ -34,7 +35,7 @@ public class GoogleResultsPage {
      *
      * @return an integer with the number of results
      */
-    public int getNumberOfResults() {
+    public long getNumberOfResults() {
 
         String results = driver.findElement(this.googleResults).getText();
 //        Get only the numeric characters
@@ -42,8 +43,8 @@ public class GoogleResultsPage {
 //        Remove the last three numeric characters which correspond to the time to find the results
         String newResults = numbers.substring(0, numbers.length() - 3);
 //        Convert the String into integer
-        int intResults = Integer.valueOf(newResults);
+        long longResults = Long.parseLong(newResults);
 
-        return intResults;
+        return longResults;
     }
 }
